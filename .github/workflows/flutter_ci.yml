@@ -1,0 +1,42 @@
+name: Flutter CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Usa Ubuntu para la ejecución del pipeline
+
+    steps:
+      # 1. Descargar el repositorio
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Configurar Flutter
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.32.0'  # Asegúrate de poner la versión de Flutter que estás usando
+
+      # 3. Instalar dependencias
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 4. Ejecutar análisis estático del código (opcional, pero útil)
+      - name: Analyze code
+        run: flutter analyze
+
+      # 5. Verificar si existen pruebas antes de ejecutarlas
+      - name: Check if test directory exists
+        run: |
+          if [ -d "test" ]; then
+            echo "Aplicando pruebas...";
+            flutter test;
+          else
+            echo "No existe testeo aun.";
+          fi
