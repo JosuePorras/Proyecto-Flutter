@@ -1,5 +1,5 @@
 
-import 'dart:js_interop';
+//import 'dart:js_interop';
 
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:inventigacionflutter/core/error/failures.dart';
