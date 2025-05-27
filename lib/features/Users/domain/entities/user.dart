@@ -1,6 +1,6 @@
 class User{
   //Atributtes
-  final String id;
+  final int id;
   final String name;
   final String email;
   final String gender;

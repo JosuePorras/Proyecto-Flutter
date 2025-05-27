@@ -11,7 +11,7 @@ abstract class UserApiRemote {
   // function to create a user
   Future<User> createUser(User user);
   // function to get a user by id
-  Future<User> getUserById(String id);
+  Future<User> getUserById(int id);
 
 }
 
@@ -30,7 +30,7 @@ class UserApiRemoteImpl implements UserApiRemote {
   }
   
   @override
-  Future<User> getUserById(String id) async{
+  Future<User> getUserById(int id) async{
     final resp = await dio.get('https://gorest.co.in/public/v2/users/$id');
     if (resp.statusCode == 200) {
       return UserModel.fromJson(resp.data);
