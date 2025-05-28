@@ -113,7 +113,7 @@ class HomeScreen extends StatelessWidget {
               Text(
                 'Navega usando la barra inferior',
                 style: theme.textTheme.bodyMedium!.copyWith(
-                  color: theme.colorScheme.onPrimary,
+                  color: theme.colorScheme.onPrimary.withAlpha((255 * 0.8).round()),
                 ),
               ),
             ],

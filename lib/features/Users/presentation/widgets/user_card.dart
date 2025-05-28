@@ -30,7 +30,7 @@ class UserCard extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade300),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey,
+            color: Colors.grey.withAlpha((255 * 0.1).round()),
             blurRadius: 6,
             offset: const Offset(0, 3),
           ),
@@ -57,7 +57,7 @@ class UserCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(email,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurface,
+                        color: colorScheme.onSurface.withAlpha((255 * 0.7).round()),
                       )),
                   const SizedBox(height: 8),
                   Row(
