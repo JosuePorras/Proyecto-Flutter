@@ -1,7 +1,6 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
-import 'package:inventigacionflutter/features/Users/domain/entities/user.dart';
-import 'package:inventigacionflutter/features/Users/screens/user_form.dart';
+import 'package:inventigacionflutter/features/Users/presentation/screens/user_form.dart';
 import 'package:provider/provider.dart';
 
 void main() {
