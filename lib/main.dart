@@ -94,18 +94,22 @@ class GeneratorPage extends StatelessWidget {
               //Button to add user
               ElevatedButton.icon(
                 onPressed: () {
-                  Navigator.pushNamed(context, UserForm.ROUTE);
+                  showDialog(
+                    context: context,
+                    builder: (context) => Dialog(
+                      child: Container(
+                        padding: EdgeInsets.all(16),
+                        width: 400,
+                        child: UserForm(),
+                      ),
+                    ),
+                  );
                 },
                 icon: Icon(Icons.person_add),
                 label: Text('Agregar usuario'),
               ),
               SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () {
-                  appState.getNext();
-                },
-                child: Text('Next'),
-              ),
+
             ],
           ),
         ],

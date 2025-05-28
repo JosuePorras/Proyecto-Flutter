@@ -1,14 +1,44 @@
 import 'package:flutter/material.dart';
 
 class UserForm extends StatelessWidget {
+  static const ROUTE = '/user_form';
 
-  static const String ROUTE = "/user_form";
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(
-      title: Text("Agregar Usuario"),
-    ),
-      body: Container(child: Text("Prueba"),),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text('Agregar usuario', style: Theme.of(context).textTheme.titleLarge),
+        TextFormField(
+          decoration: InputDecoration(labelText: 'Nombre'),
+        ),
+        TextFormField(
+          decoration: InputDecoration(labelText: 'Correo'),
+        ),
+        TextFormField(
+          decoration: InputDecoration(labelText: 'Genero'),
+        ),
+        TextFormField(
+          decoration: InputDecoration(labelText: 'Estado'),
+        ),
+        SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            TextButton(
+              child: Text('Cancelar'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            ElevatedButton(
+              child: Text('Guardar'),
+              onPressed: () {
+                // guardar usuario
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        )
+      ],
     );
   }
 }
