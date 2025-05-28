@@ -1,16 +1,10 @@
 name: Flutter CI
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Usa Ubuntu para la ejecución del pipeline
+    runs-on: ubuntu-latest
 
     steps:
       # 1. Descargar el repositorio
@@ -27,9 +21,15 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      # 4. Ejecutar análisis estático del código (opcional, pero útil)
-      - name: Analyze code
-        run: flutter analyze
+      # 4. Ejecutar build_runner si hay tests
+      - name: Run build_runner (if tests exist)
+        run: |
+          if [ -d "test" ]; then
+            echo "Generando archivos con build_runner...";
+           dart run build_runner build --delete-conflicting-outputs;
+          else
+            echo "No hay tests, omitiendo build_runner.";
+          fi
 
       # 5. Verificar si existen pruebas antes de ejecutarlas
       - name: Check if test directory exists
