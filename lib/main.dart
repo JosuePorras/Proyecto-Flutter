@@ -1,5 +1,7 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+import 'package:inventigacionflutter/features/Users/domain/entities/user.dart';
+import 'package:inventigacionflutter/features/Users/screens/user_form.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -21,6 +23,10 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
         ),
         home: MyHomePage(),
+
+        routes: {
+          UserForm.ROUTE : (_) => UserForm()
+        },
       ),
     );
   }
@@ -88,9 +94,9 @@ class GeneratorPage extends StatelessWidget {
               //Button to add user
               ElevatedButton.icon(
                 onPressed: () {
-
+                  Navigator.pushNamed(context, UserForm.ROUTE);
                 },
-
+                icon: Icon(Icons.person_add),
                 label: Text('Agregar usuario'),
               ),
               SizedBox(width: 10),
