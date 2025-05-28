@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class UserForm extends StatelessWidget {
-  static const ROUTE = '/user_form';
+  static const route = '/user_form';
 
   @override
   Widget build(BuildContext context) {
