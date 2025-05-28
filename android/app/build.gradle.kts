@@ -7,6 +7,7 @@ plugins {
 
 android {
     namespace = "com.una.moviles.inventigacionflutter"
+
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 

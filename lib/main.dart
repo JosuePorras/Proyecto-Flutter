@@ -84,6 +84,15 @@ class GeneratorPage extends StatelessWidget {
                 icon: Icon(icon),
                 label: Text('Like'),
               ),
+
+              //Button to add user
+              ElevatedButton.icon(
+                onPressed: () {
+
+                },
+
+                label: Text('Agregar usuario'),
+              ),
               SizedBox(width: 10),
               ElevatedButton(
                 onPressed: () {
