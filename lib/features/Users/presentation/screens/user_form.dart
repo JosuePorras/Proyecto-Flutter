@@ -52,7 +52,7 @@ class _UserFormState extends State<UserForm> {
         status: _statusController.text,
       );
 
-      debugPrint('Saving user: ${newUser.name}, ID: ${newUser.id}');
+      debugPrint('Saving user: $newUser, ID: ${newUser.id}');
       final userBloc = context.read<UserBloc>();
 
       //if updating an existing user
@@ -100,19 +100,44 @@ class _UserFormState extends State<UserForm> {
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(labelText: 'Correo'),
-                validator: (value) => value!.isEmpty ? 'Requerido' : null,
+                keyboardType: TextInputType.emailAddress,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Requerido';
+                  }
+                  final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                  if (!emailRegex.hasMatch(value)) {
+                    return 'Correo inválido';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 8),
-              TextFormField(
-                controller: _genderController,
+              DropdownButtonFormField<String>(
+                value: _genderController.text.isNotEmpty ? _genderController.text : null,
                 decoration: const InputDecoration(labelText: 'Género'),
-                validator: (value) => value!.isEmpty ? 'Requerido' : null,
+                items: const [
+                  DropdownMenuItem(value: 'male', child: Text('Masculino')),
+                  DropdownMenuItem(value: 'female', child: Text('Femenino')),
+                ],
+                onChanged: (value) {
+                  _genderController.text = value!;
+                },
+                validator: (value) => value == null || value.isEmpty ? 'Requerido' : null,
               ),
               const SizedBox(height: 8),
-              TextFormField(
-                controller: _statusController,
+
+              DropdownButtonFormField<String>(
+                value: _statusController.text.isNotEmpty ? _statusController.text : null,
                 decoration: const InputDecoration(labelText: 'Estado'),
-                validator: (value) => value!.isEmpty ? 'Requerido' : null,
+                items: const [
+                  DropdownMenuItem(value: 'active', child: Text('Activo')),
+                  DropdownMenuItem(value: 'inactive', child: Text('Inactivo')),
+                ],
+                onChanged: (value) {
+                  _statusController.text = value!;
+                },
+                validator: (value) => value == null || value.isEmpty ? 'Requerido' : null,
               ),
               const SizedBox(height: 20),
               Row(
