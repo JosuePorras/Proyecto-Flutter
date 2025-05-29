@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
         AppRoutes.home: (_) => const MyHomePage(),
         AppRoutes.userList: (_) => const UserListPage(),
         AppRoutes.userForm: (_) => UserForm(),
+        AppRoutes.userDetail: (_) => const UserDetailPage(),
       },
     );
   }
@@ -47,6 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<Widget> pages = [
     const HomeScreen(),
     const UserListPage(),
+    const UserDetailPage(),
   ];
 
   void _onItemTapped(int index) {
