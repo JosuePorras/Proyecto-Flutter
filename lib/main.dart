@@ -1,215 +1,52 @@
-import 'package:english_words/english_words.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:inventigacionflutter/features/Users/data/datasources/user_api_remote.dart';
+import 'package:inventigacionflutter/features/Users/data/repositories/users_repository_impl.dart';
+import 'package:inventigacionflutter/features/Users/domain/repositories/user_repository.dart';
+import 'package:inventigacionflutter/features/Users/domain/use_cases/add_user.dart';
+import 'package:inventigacionflutter/features/Users/domain/use_cases/delete_user.dart';
+import 'package:inventigacionflutter/features/Users/domain/use_cases/get_user_by_id.dart';
+import 'package:inventigacionflutter/features/Users/domain/use_cases/get_users.dart';
+import 'package:inventigacionflutter/features/Users/domain/use_cases/update_user.dart';
+import 'package:inventigacionflutter/features/Users/presentation/bloc/userBloc.dart';
+import 'app/app.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
-  runApp(MyApp());
-}
+  final dio = Dio();
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  //dataSource
+  final UserApiRemote userApiRemote = UserApiRemoteImpl(dio);
 
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => MyAppState(),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Investigacion-flutter',
-        theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+  //Repository
+  final UserRepository userRepository = UsersRepositoryImpl(userApiRemote: userApiRemote);
+
+  //Use Cases
+  final AddUserUseCase addUserUseCase = AddUserUseCase(userRepository: userRepository);
+  final GetAllUsersUseCase getAllUsersUseCase = GetAllUsersUseCase(userRepository: userRepository);
+  final UpdateUserUseCase updateUserUseCase = UpdateUserUseCase(userRepository: userRepository);
+  final UserDeleteUseCase deleteUserUseCase = UserDeleteUseCase(userRepository: userRepository);
+  final GetUserByIdUseCase getUserByIdUseCase = GetUserByIdUseCase(userRepository: userRepository);
+
+  //Bloc
+
+  final UserBloc userBloc = UserBloc(
+    addUserUseCase, 
+    updateUserUseCase, 
+    deleteUserUseCase, 
+    getAllUsersUseCase, 
+    getUserByIdUseCase
+    );
+
+
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider<UserBloc>(
+          create: (_) => userBloc,
         ),
-        home: MyHomePage(),
-      ),
-    );
-  }
-}
-
-class MyAppState extends ChangeNotifier {
-  var current = WordPair.random();
-
-  void getNext() {
-    current = WordPair.random();
-    notifyListeners();
-  }
-
-  // ↓ Add the code below.
-  var favorites = <WordPair>[];
-
-  void toggleFavorite() {
-    if (favorites.contains(current)) {
-      favorites.remove(current);
-    } else {
-      favorites.add(current);
-    }
-    notifyListeners();
-  }
-}
-
-// ...
-
-class MyHomePage extends StatefulWidget {
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-
-class GeneratorPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-    var pair = appState.current;
-
-    IconData icon;
-    if (appState.favorites.contains(pair)) {
-      icon = Icons.favorite;
-    } else {
-      icon = Icons.favorite_border;
-    }
-
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          BigCard(pair: pair),
-          SizedBox(height: 10),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ElevatedButton.icon(
-                onPressed: () {
-                  appState.toggleFavorite();
-                },
-                icon: Icon(icon),
-                label: Text('Like'),
-              ),
-              SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () {
-                  appState.getNext();
-                },
-                child: Text('Next'),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ...
-
-class _MyHomePageState extends State<MyHomePage> {
-  var selectedIndex = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    Widget page;
-    switch (selectedIndex) {
-      case 0:
-        page = GeneratorPage();
-        break;
-      case 1:
-        page = FavoritesPage();
-        break;
-      default:
-        throw UnimplementedError('no widget for $selectedIndex');
-    }
-
-    return LayoutBuilder(builder: (context, constraints) {
-      return Scaffold(
-        body: Row(
-          children: [
-            SafeArea(
-              child: NavigationRail(
-                extended: constraints.maxWidth >= 600,  // ← Here.
-                destinations: [
-                  NavigationRailDestination(
-                    icon: Icon(Icons.home),
-                    label: Text('Home'),
-                  ),
-                  NavigationRailDestination(
-                    icon: Icon(Icons.favorite),
-                    label: Text('Favorites'),
-                  ),
-                ],
-                selectedIndex: selectedIndex,
-                onDestinationSelected: (value) {
-                  setState(() {
-                    selectedIndex = value;
-                  });
-                },
-              ),
-            ),
-            Expanded(
-              child: Container(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                child: page,
-              ),
-            ),
-          ],
-        ),
-      );
-    });
-  }
-}
-
-// ...
-
-class BigCard extends StatelessWidget {
-  const BigCard({
-    super.key,
-    required this.pair,
-  });
-
-  final WordPair pair;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    // ↓ Add this.
-    final style = theme.textTheme.displayMedium!.copyWith(
-      color: theme.colorScheme.onPrimary,
-    );
-
-    return Card(
-      color: theme.colorScheme.primary,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        // ↓ Change this line.
-        child: Text(pair.asLowerCase, style: style),
-      ),
-    );
-  }
-}
-
-// ...
-class FavoritesPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-
-    if (appState.favorites.isEmpty) {
-      return Center(
-        child: Text('No favorites yet.'),
-      );
-    }
-
-    return ListView(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Text('You have '
-              '${appState.favorites.length} favorites:'),
-        ),
-        for (var pair in appState.favorites)
-          ListTile(
-            leading: Icon(Icons.favorite),
-            title: Text(pair.asLowerCase),
-          ),
       ],
-    );
-  }
+      child: const MyApp()
+    ),
+  );
 }

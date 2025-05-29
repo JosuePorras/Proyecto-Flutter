@@ -18,10 +18,15 @@ dependencies:
   dio: ^5.8.0+1
   hive_flutter: ^1.1.0
   either_dart: ^1.0.0
+  bloc: ^9.0.0
+  flutter_bloc: ^9.1.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  mockito: ^5.4.2
+  build_runner: ^2.4.6
 
   flutter_lints: ^5.0.0
 
