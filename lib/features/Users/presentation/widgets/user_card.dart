@@ -3,6 +3,7 @@ import 'package:inventigacionflutter/features/Users/presentation/screens/user_fo
 import 'package:inventigacionflutter/features/Users/domain/entities/user.dart';
 
 class UserCard extends StatelessWidget {
+  final int id;
   final String name;
   final String email;
   final String gender;
@@ -11,11 +12,12 @@ class UserCard extends StatelessWidget {
 
   const UserCard({
     super.key,
+    required this.id,
     required this.name,
     required this.email,
     required this.gender,
     required this.status,
-    this.onDelete,
+    this.onDelete, 
   });
 
   @override
@@ -97,7 +99,20 @@ class UserCard extends StatelessWidget {
                 IconButton(
                   icon: Icon(Icons.edit, color: colorScheme.primary),
                   onPressed: () {
-                    Navigator.pushNamed(context, '/userForm');
+                    final user = User(
+                      id: id,
+                      name: name,
+                      email: email,
+                      gender: gender,
+                      status: status,
+                    );
+                    Navigator.push(
+                      context, 
+                      MaterialPageRoute(
+                        builder: (context) => UserForm(user: user)
+                        )
+                    );
+                    //Navigator.pushNamed(context, '/user_form');
                   },
                 ),
                 IconButton(
@@ -107,24 +122,7 @@ class UserCard extends StatelessWidget {
                 ),
               ],
             ),
-            // IconButton(
-            //   icon: Icon(Icons.edit, color: colorScheme.primary),
-            //   onPressed: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //         builder: (_) => UserForm(
-            //           user: User(
-            //             id: 1, // Usa el id correcto
-            //             name: name,
-            //             email: email,
-            //             gender: gender,
-            //             status: status,
-            //           ),
-            //         ),
-            //       ),
-            //     );
-            //   },
+          
           ],
         ),
       ),

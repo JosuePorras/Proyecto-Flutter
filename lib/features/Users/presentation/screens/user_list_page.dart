@@ -110,6 +110,7 @@ class _UserListPageState extends State<UserListPage> {
                         }
                       },
                       child: UserCard(
+                        id: user.id,
                         name: user.name,
                         email: user.email,
                         gender: user.gender,

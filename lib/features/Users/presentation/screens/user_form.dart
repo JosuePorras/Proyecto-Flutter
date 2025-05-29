@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:inventigacionflutter/features/Users/data/models/user_model.dart';
 import 'package:inventigacionflutter/features/Users/domain/entities/user.dart';
+import 'package:inventigacionflutter/features/Users/presentation/bloc/userBloc.dart';
+import 'package:inventigacionflutter/features/Users/presentation/bloc/userEvent.dart';
+import 'package:provider/provider.dart';
 
 class UserForm extends StatefulWidget {
   static const route = '/user_form';
@@ -23,7 +27,6 @@ class _UserFormState extends State<UserForm> {
   void initState() {
     super.initState();
 
-
     _nameController = TextEditingController(text: widget.user?.name ?? '');
     _emailController = TextEditingController(text: widget.user?.email ?? '');
     _genderController = TextEditingController(text: widget.user?.gender ?? '');
@@ -42,75 +45,116 @@ class _UserFormState extends State<UserForm> {
   void _saveForm() {
     if (_formKey.currentState?.validate() ?? false) {
       final newUser = User(
-        id: widget.user?.id ?? DateTime.now().millisecondsSinceEpoch,
+        id: widget.user?.id ?? 0,
         name: _nameController.text,
         email: _emailController.text,
         gender: _genderController.text,
         status: _statusController.text,
       );
 
-      Navigator.of(context).pop(newUser);
+      debugPrint('Saving user: ${newUser.name}, ID: ${newUser.id}');
+      final userBloc = context.read<UserBloc>();
+
+      //if updating an existing user
+      if (newUser.id != 0) {
+        userBloc.add(UpdateUserEvent(user: newUser));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Usuario actualizado exitosamente')),
+        );
+      } else {
+        //Adding a new user
+        userBloc.add(AddUserEvent(user: newUser));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Usuario Registrado exitosamente')),
+        );
+      }
+
+      Navigator.of(context).pop();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.user != null;
+    print('isEditing: $isEditing');
 
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Agregar Usuario'),
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        ),
-        body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+      appBar: AppBar(
+        title: Text(isEditing ? 'Editar Usuario' : 'Agregar Usuario'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Form(
           key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(labelText: 'Nombre'),
-                  validator: (value) => value!.isEmpty ? 'Requerido' : null,
-                ),
-                const SizedBox(height: 8),
-                TextFormField(
-                  controller: _emailController,
-                  decoration: const InputDecoration(labelText: 'Correo'),
-                  validator: (value) => value!.isEmpty ? 'Requerido' : null,
-                ),
-                const SizedBox(height: 8),
-                TextFormField(
-                  controller: _genderController,
-                  decoration: const InputDecoration(labelText: 'Género'),
-                  validator: (value) => value!.isEmpty ? 'Requerido' : null,
-                ),
-                const SizedBox(height: 8),
-                TextFormField(
-                  controller: _statusController,
-                  decoration: const InputDecoration(labelText: 'Estado'),
-                  validator: (value) => value!.isEmpty ? 'Requerido' : null,
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      child: const Text('Cancelar'),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                    const SizedBox(width: 8),
-                    ElevatedButton(
-                      child: Text(isEditing ? 'Actualizar' : 'Guardar'),
-                      onPressed: _saveForm,
-                    ),
-                  ],
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: _nameController,
+                decoration: const InputDecoration(labelText: 'Nombre'),
+                validator: (value) => value!.isEmpty ? 'Requerido' : null,
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _emailController,
+                decoration: const InputDecoration(labelText: 'Correo'),
+                validator: (value) => value!.isEmpty ? 'Requerido' : null,
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _genderController,
+                decoration: const InputDecoration(labelText: 'Género'),
+                validator: (value) => value!.isEmpty ? 'Requerido' : null,
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _statusController,
+                decoration: const InputDecoration(labelText: 'Estado'),
+                validator: (value) => value!.isEmpty ? 'Requerido' : null,
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    child: const Text('Cancelar'),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: _saveForm,
+                    child: Text(isEditing ? 'Actualizar' : 'Guardar'),
 
-                ),
-              ],
-            ),
-            ),
-        );
-    }
+                    // onPressed: () {
+                    //   if (_formKey.currentState?.validate() ?? false) {
+                    //     final newUser = User(
+                    //       id: widget.user?.id ?? 0,
+                    //       name: _nameController.text,
+                    //       email: _emailController.text,
+                    //       gender: _genderController.text,
+                    //       status: _statusController.text,
+                    //     );
+                    //     //Add Event to Bloc
+                    //     context.read<UserBloc>().add(AddUserEvent(user: newUser));
+                    //     //Success message
+                    //     ScaffoldMessenger.of(context).showSnackBar(
+                    //       const SnackBar(
+                    //         content: Text("Usuario guardado exitosamente"),
+                    //       ),
+                    //     );
+                    //     //Navigate back
+                    //     Navigator.of(context).pop();
+                    //   }
+                    // },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

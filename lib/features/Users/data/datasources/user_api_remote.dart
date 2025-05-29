@@ -8,7 +8,8 @@ import 'package:inventigacionflutter/features/Users/data/models/user_model.dart'
 import 'package:inventigacionflutter/features/Users/domain/entities/user.dart';
 
 abstract class UserApiRemote {
- 
+  static const String authToken = 'Bearer ea81247968d1a86536d5bc09b5c6c353f9eb7fcebc91a7a409dda4d4f6b20b87';
+ //static const String authToken = 
   // function to create a user
   Future<bool> createUser(User user);
   // function to get a user by id
@@ -22,19 +23,29 @@ abstract class UserApiRemote {
 }
 
 class UserApiRemoteImpl implements UserApiRemote {
-
+  /// The auth token for the API requests.
+  static const String authToken = UserApiRemote.authToken;
   final Dio dio;
 
   UserApiRemoteImpl(this.dio) {
-    dio.options.baseUrl = 'https://gorest.co.in/public/v2/';
+    dio.options.baseUrl = 'https://gorest.co.in/public/v2';
+    dio.options.connectTimeout = const Duration(seconds: 10);
+    dio.options.receiveTimeout = const Duration(seconds: 10);
+
     dio.options.headers['Content-Type'] = 'application/json';
-    dio.options.headers['Authorization'] = '85c34e4d94b3e8e3982ef004fca08a9ed3d35919774121584a62323c90cd4078';
+    dio.options.headers['Accept'] = 'application/json';
+    dio.options.headers['Authorization'] = authToken;
+    
+    // dio.options.baseUrl = 'https://gorest.co.in/public/v2/';
+    // dio.options.headers['Content-Type'] = 'application/json';
+    // dio.options.headers['Authorization'] = 'Bearer ea81247968d1a86536d5bc09b5c6c353f9eb7fcebc91a7a409dda4d4f6b20b87';
   }
 
   @override
   Future<bool> createUser(User user) async {
     try {
-      final resp = await dio.post('/users', data: (user as UserModel).toJson());
+      final UserModel userModel = UserModel.fromEntity(user);
+      final resp = await dio.post('/users', data: userModel.toJson());
       if (resp.statusCode == 201) {
         return true;
       } else {
@@ -103,7 +114,8 @@ class UserApiRemoteImpl implements UserApiRemote {
   @override
   Future<bool> updateUser(User user) async {
     try {
-      final resp = await dio.put('/users/${user.id}', data: (user as UserModel).toJson());
+      final UserModel userModel = UserModel.fromEntity(user);
+      final resp = await dio.put('/users/${user.id}', data:userModel.toJson());
       if (resp.statusCode == 200){
         return true;
       } else {
