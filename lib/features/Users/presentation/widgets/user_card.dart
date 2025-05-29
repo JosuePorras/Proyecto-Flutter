@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:inventigacionflutter/features/Users/presentation/screens/user_form.dart';
+import 'package:inventigacionflutter/features/Users/domain/entities/user.dart';
 
 class UserCard extends StatelessWidget {
   final String name;
@@ -83,7 +85,20 @@ class UserCard extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.edit, color: colorScheme.primary),
               onPressed: () {
-                Navigator.pushNamed(context, '/userForm');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => UserForm(
+                      user: User(
+                        id: 1, // Usa el id correcto
+                        name: name,
+                        email: email,
+                        gender: gender,
+                        status: status,
+                      ),
+                    ),
+                  ),
+                );
               },
             ),
           ],

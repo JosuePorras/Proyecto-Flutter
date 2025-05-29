@@ -4,6 +4,7 @@ import 'package:inventigacionflutter/features/Users/domain/entities/user.dart';
 import 'package:inventigacionflutter/features/Users/presentation/bloc/userBloc.dart';
 import 'package:inventigacionflutter/features/Users/presentation/bloc/userEvent.dart';
 import 'package:inventigacionflutter/features/Users/presentation/bloc/userState.dart';
+import 'package:inventigacionflutter/features/Users/presentation/screens/user_form.dart';
 import '../widgets/user_card.dart';
 
 class UserListPage extends StatelessWidget {
@@ -53,7 +54,10 @@ class UserListPage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          Navigator.pushNamed(context, '/user_form');
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const UserForm()),
+          );
         },
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
