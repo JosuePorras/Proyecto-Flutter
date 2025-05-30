@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Descargar el repositorio
+      # 1. Se descarga el repo
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -15,13 +15,13 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.32.0'  # Asegúrate de poner la versión de Flutter que estás usando
+          flutter-version: '3.32.0'
 
-      # 3. Instalar dependencias
+      # 3. Instalar dependencias de flutter
       - name: Install dependencies
         run: flutter pub get
 
-      # 4. Ejecutar build_runner si hay tests
+      # 4. Ejecutar build_runner si hay tests (Por si no hay test por verficicar)
       - name: Run build_runner (if tests exist)
         run: |
           if [ -d "test" ]; then
