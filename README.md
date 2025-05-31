@@ -76,7 +76,7 @@ A workflow has been configured in `.github/workflows/flutter.yml` to automatical
 
 ## Video Tutorial
 
-Link: [Watch on YouTube]()  
+Link: [Watch on YouTube](https://youtu.be/pO2_Yy2KiMk)  
 (This video explains the framework, CRUD implementation, testing setup, and CI process.)
 
 ## Developers
