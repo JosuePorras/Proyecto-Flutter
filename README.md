@@ -91,7 +91,3 @@ Link: [Watch on YouTube](https://youtu.be/pO2_Yy2KiMk)
 ## Main Branch
 
 The main branch for this project is: `main`
-
-## References
-
-This project is part of a comprehensive research assignment focused on investigating various mobile platforms. For further information, refer to the PDF report included in the submission.
