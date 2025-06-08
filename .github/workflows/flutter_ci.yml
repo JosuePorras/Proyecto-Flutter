@@ -1,64 +1,35 @@
-# .github/workflows/tipopago-ci.yml
-name: TipoPago CI
-on: 
-  push:
-    branches: [ dev-qa, main ]
-  pull_request:
-    branches: [ dev-qa ]
-
+name: Flutter CI
+on: [push, pull_request]
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
       # 1. Se descarga el repo
       - name: Checkout code
         uses: actions/checkout@v3
-        
-      # 2. Configurar Node.js
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      # 2. Configurar Flutter
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
-          node-version: '18'
-          cache: 'npm'
-          
-      # 3. Instalar dependencias
+          flutter-version: '3.32.0'
+      # 3. Instalar dependencias de flutter
       - name: Install dependencies
-        run: npm install
-        
-      # 4. Verificar si existen pruebas de integración antes de ejecutarlas
-      - name: Check if integration tests exist
+        run: flutter pub get
+      # 4. Ejecutar build_runner si hay tests (Por si no hay test por verficicar)
+      - name: Run build_runner (if tests exist)
         run: |
-          if [ -d "tests/integration" ]; then
-            echo "Ejecutando pruebas de integración de TipoPago...";
-            npm run test:integration;
+          if [ -d "test" ]; then
+            echo "Generando archivos con build_runner...";
+           dart run build_runner build --delete-conflicting-outputs;
           else
-            echo "No existen pruebas de integración aún.";
-            echo "Creando estructura de pruebas...";
-            mkdir -p tests/integration;
-            echo "Estructura creada. Agrega tus pruebas de integración.";
+            echo "No hay tests, omitiendo build_runner.";
           fi
-          
-      # 5. Construir aplicación si las pruebas pasan
-      - name: Build application
+      # 5. Verificar si existen pruebas antes de ejecutarlas
+      - name: Check if test directory exists
         run: |
-          echo "Construyendo aplicación...";
-          npm run build;
-          
-      # 6. Desplegar si es rama DEV-QA y pruebas pasan
-      - name: Deploy to staging (DEV-QA branch)
-        if: github.ref == 'refs/heads/dev-qa' && success()
-        run: |
-          echo "🚀 Desplegando a staging desde rama DEV-QA...";
-          echo "Todas las pruebas de TipoPago pasaron - Listo para staging";
-          
-      # 7. Notificar resultado final
-      - name: Test results
-        run: |
-          if [ $? -eq 0 ]; then
-            echo "✅ Todas las pruebas de integración de TipoPago pasaron correctamente";
-            echo "✅ Módulo TipoPago listo para producción";
+          if [ -d "test" ]; then
+            echo "Aplicando pruebas...";
+            flutter test;
           else
-            echo "❌ Algunas pruebas de integración fallaron";
-            echo "❌ Revisar módulo TipoPago antes de continuar";
-            exit 1;
+            echo "No existe testeo aun.";
           fi
